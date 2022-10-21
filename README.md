@@ -1,4 +1,6 @@
-## YOLOV3：You Only Look Once目标检测模型在Pytorch当中的实现
+## CT床板瑕疵检测 
+# 模型：YOLO-V3 
+# Pytorch实现
 ---
 
 ## 目录
