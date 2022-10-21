@@ -65,9 +65,7 @@ classes_path指向检测类别所对应的txt。**
 **本文使用VOC格式进行训练，训练前需要自己制作好数据集，**    
 训练前将标签文件放在VOCdevkit文件夹下的VOC2007文件夹下的Annotation中。
 #标签为.xml格式，文件中会有需要检测的目标信息，标签文件和输入图片文件相对应
-
 训练前将图片文件放在VOCdevkit文件夹下的VOC2007文件夹下的JPEGImages中。#jpg格式。   
-
 
 2. 数据集的处理  
 在完成数据集的摆放之后，我们需要利用voc_annotation.py获得训练用的2007_train.txt和2007_val.txt。   
