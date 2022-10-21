@@ -11,11 +11,9 @@ from sklearn.feature_extraction.image import reconstruct_from_patches_2d
 import imageio
 import sklearn
 import sklearn.decomposition 
-import PIL
-import PIL.Image
-import PIL.ImageDraw
+
 from utils_io import TopBed
-import cv2
+
 # def sobel(img):
 #     return (scipy.ndimage.sobel(img, 0)**2 \
 #             + scipy.ndimage.sobel(img, 1)**2)**0.5
@@ -56,35 +54,16 @@ class DetectionAsDict(object):
             or numpy array with shape [N, 1, C, H].
         '''
         for _ in range(self.dict_learner.n_iter):
-            print("images.shape",images.shape)
+            print(images.shape)
             X = [extract_patches_2d(image, self.patch_size, max_patches=10) for image in images]
             X = np.concatenate(X, axis=0)
+            print(X.shape)
             X = X.reshape(X.shape[0], -1)
             self.dict_learner.partial_fit(X)
             #print(self.dict_learner.n_iter_)
             print(self.dict_learner.iter_offset_)
         # image.PatchExtractor
         # numpy.lib.stride_tricks.sliding_window_view
-
-    def eval2(self, image, bbox=False):
-        X = extract_patches_2d(image, self.patch_size)
-        X = X.reshape(X.shape[0], -1)
-        X_transformed = self.dict_learner.transform(X)
-        X_hat = X_transformed @ self.dict_learner.components_
-        X_hat = X_hat.reshape(len(X_hat), *self.patch_size)
-        recon = reconstruct_from_patches_2d(X_hat, image.shape)
-        error = recon - image
-        print("error.shape",error.shape)
-        if bbox:
-            bboxes = []
-            error = error_to_bin(error)
-            label, n_features = scipy.ndimage.label(error)
-            for cnt in range(1, n_features+1):
-                y, x = np.nonzero(label == cnt)
-                bboxes.append((x.min()-1, y.min()-1, x.max()+1, y.max()+1))
-            return bboxes
-        else:
-            return error
 
     def eval(self, image, bbox=False):
         X = extract_patches_2d(image, self.patch_size)
@@ -94,58 +73,13 @@ class DetectionAsDict(object):
         X_hat = X_hat.reshape(len(X_hat), *self.patch_size)
         recon = reconstruct_from_patches_2d(X_hat, image.shape)
         error = recon - image
-
         if bbox:
-            print('bbox')
             bboxes = []
             error = error_to_bin(error)
-            #save_path=r'C:\Users\Z004F4FY\Desktop\bed-ot\error.png'
-            #save_path2 = r'C:\Users\Z004F4FY\Desktop\bed-ot\error_morph.png'
-            #
-            #imageio.imsave(save_path,np.clip(error * 255, 0, 255).astype(np.uint8))
-            #imageio.imsave(save_path2,np.clip(error * 255 / 10, 0, 255).astype(np.uint8))
-#            img = PIL.Image.fromarray(error).convert('RGB')
-#            img.save(save_path)
-            #
             label, n_features = scipy.ndimage.label(error)
-            area=0
-            mask_error = np.zeros(shape=error.shape)
             for cnt in range(1, n_features+1):
                 y, x = np.nonzero(label == cnt)
-                area_label=len(y)
-                if area_label>=area:
-                    area=area_label
-                    y1, x1=y, x
-            mask_error[y1, x1]=255
-
-            height, width = mask_error.shape
-
-            # 声明变换矩阵 参数1向右平移50个像素， 参数2向下平移100个像素
-            M = np.float32([[1, 0, 100], [0, 1, 200]])
-            # 进行2D 仿射变换
-            shifted = cv2.warpAffine(mask_error, M, (width, height))
-
-            save_path = r'C:\Users\Z004F4FY\Desktop\bed-ot\error_image.png'
-            imageio.imsave(save_path, np.clip(mask_error * 255, 0, 255).astype(np.uint8))
-
-            save_path1 = r'C:\Users\Z004F4FY\Desktop\bed-ot\shifted_image.png'
-            imageio.imsave(save_path1, np.clip(shifted * 255, 0, 255).astype(np.uint8))
-
-            image_made=image
-            image_made[np.nonzero(shifted)]=image_made[np.nonzero(mask_error)]
-            save_path2 = r'C:\Users\Z004F4FY\Desktop\bed-ot\made_image.png'
-            imageio.imsave(save_path2,image_made)
-
-            image_2=image
-            mask_defect= np.zeros(shape=error.shape)
-            mask_defect[np.nonzero(mask_error)]=image_2[np.nonzero(mask_error)]
-            save_path3 = r'C:\Users\Z004F4FY\Desktop\bed-ot\mask_defect.png'
-            imageio.imsave(save_path3,mask_defect)
-
-            #bboxes.append((x.min()-1, y.min()-1, x.max()+1, y.max()+1))
-
-            bboxe = [x1.min() - 1, y1.min() - 1, x1.max() + 1, y1.max() + 1]
-            bboxes.append(bboxe)
+                bboxes.append((x.min()-1, y.min()-1, x.max()+1, y.max()+1))
             return bboxes
         else:
             return error
@@ -171,7 +105,7 @@ def main(args):
         assert args.eval is not None
         model = DetectionAsDict(load=args.eval)
         print('evaluation...')
-        image = topbed.get_DX_intensity() 
+        image = topbed.get_DX_intensity()
         error = model.eval(image.copy())
         imageio.imsave('error.png', \
             np.clip(np.abs(error)*255/10, 0, 255).astype(np.uint8))
@@ -190,14 +124,13 @@ def main(args):
             np.clip((error>1.5)*255, 0, 255).astype(np.uint8))
         print('Done.')
 
-
 def error_to_bin(error):
     error = scipy.ndimage.filters.convolve(
         error,
         np.array([[0,1,0],[1,1,1],[0,1,0]])/5)
     error = np.abs(error)
     error = error > 1.5
-    #error = scipy.ndimage.morphology.binary_dilation(error, np.ones((5,5)))
+    error = scipy.ndimage.morphology.binary_dilation(error, np.ones((5,5)))
     return error
 
 def load_data(csv_file):
