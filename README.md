@@ -1,8 +1,7 @@
 ## CT床板瑕疵检测 
-# 模型：YOLO-V3 
-# Pytorch实现
 ---
-
+#模型：YOLO-V3 
+#Pytorch实现
 ## 目录
 1. [仓库更新 Top News](#仓库更新)
 2. [相关仓库 Related code](#相关仓库)
