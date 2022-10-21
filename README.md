@@ -65,6 +65,7 @@ classes_path指向检测类别所对应的txt。**
 **本文使用VOC格式进行训练，训练前需要自己制作好数据集，**    
 训练前将标签文件放在VOCdevkit文件夹下的VOC2007文件夹下的Annotation中。
 #标签为.xml格式，文件中会有需要检测的目标信息，标签文件和输入图片文件相对应。
+
 训练前将图片文件放在VOCdevkit文件夹下的VOC2007文件夹下的JPEGImages中。#jpg格式。   
 
 2. 数据集的处理  
@@ -79,7 +80,7 @@ model_data/cls_classes.txt文件内容为：
 修改voc_annotation.py中的classes_path，使其对应cls_classes.txt，并运行voc_annotation.py。  
 
 3. 开始网络训练  
-**训练的参数较多，均在train.py中，大家可以在下载库后仔细看注释，其中最重要的部分依然是train.py里的classes_path。**  
+**训练的参数较多，均在train.py中，可以在下载库后仔细看注释，其中最重要的部分依然是train.py里的classes_path。**  
 **classes_path用于指向检测类别所对应的txt，这个txt和voc_annotation.py里面的txt一样！训练自己的数据集必须要修改！**  
 修改完classes_path后就可以运行train.py开始训练了，在训练多个epoch后，权值会生成在logs文件夹中。  
 
