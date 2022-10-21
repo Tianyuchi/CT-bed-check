@@ -63,17 +63,19 @@ classes_path指向检测类别所对应的txt。**
 ### b、训练自己的数据集
 1. 数据集的准备  
 **本文使用VOC格式进行训练，训练前需要自己制作好数据集，**    
-训练前将标签文件放在VOCdevkit文件夹下的VOC2007文件夹下的Annotation中。   
-训练前将图片文件放在VOCdevkit文件夹下的VOC2007文件夹下的JPEGImages中。   
+训练前将标签文件放在VOCdevkit文件夹下的VOC2007文件夹下的Annotation中。
+#标签为.xml格式，文件中会有需要检测的目标信息，标签文件和输入图片文件相对应
+
+训练前将图片文件放在VOCdevkit文件夹下的VOC2007文件夹下的JPEGImages中。#jpg格式。   
+
 
 2. 数据集的处理  
 在完成数据集的摆放之后，我们需要利用voc_annotation.py获得训练用的2007_train.txt和2007_val.txt。   
 修改voc_annotation.py里面的参数。第一次训练可以仅修改classes_path，classes_path用于指向检测类别所对应的txt。   
-训练自己的数据集时，可以自己建立一个cls_classes.txt，里面写自己所需要区分的类别。   
+训练自己的数据集时，可以自己建立一个cls_classes.txt，里面写自己所需要区分的类别。  
 model_data/cls_classes.txt文件内容为：      
 ```python
-cat
-dog
+1（瑕疵只有一类所以我设置为1） 
 ...
 ```
 修改voc_annotation.py中的classes_path，使其对应cls_classes.txt，并运行voc_annotation.py。  
