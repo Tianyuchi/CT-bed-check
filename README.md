@@ -92,11 +92,8 @@ classes_path指向检测类别所对应的txt。**
 
 ## 预测步骤
 ### a、使用预训练权重
-1. 下载完库后解压，在百度网盘下载yolo_weights.pth，放入model_data，运行predict.py，输入  
-```python
-img/street.jpg
-```
-2. 在predict.py里面进行设置可以进行fps测试和video视频检测。  
+1. 下载完库后解压，在百度网盘下载yolo_weights.pth，放入model_data，运行predict.py进行预测 
+```  
 ### b、使用自己训练的权重
 1. 按照训练步骤训练。  
 2. 在yolo.py文件里面，在如下部分修改model_path和classes_path使其对应训练好的文件；**model_path对应logs文件夹下面的权值文件，classes_path是model_path对应分的类**。  
@@ -139,11 +136,8 @@ _defaults = {
     "cuda"              : True,
 }
 ```
-3. 运行predict.py，输入  
-```python
-img/street.jpg
+3. 运行predict.py
 ```
-4. 在predict.py里面进行设置可以进行fps测试和video视频检测。  
 
 ## 评估步骤 
 ### a、评估VOC07+12的测试集
